@@ -28,15 +28,6 @@ def spiral_data(samples, classes):
 
 # Layers class
 class Layer_Dense:
-    """
-    Fully-connected (dense) layer:
-      output = inputs·weights + biases
-
-    Backprop computes:
-      dweights = inputs^T · dvalues
-      dbiases  = sum(dvalues over batch)
-      dinputs  = dvalues · weights^T
-    """
     # constructor to set up the layers shape
     def __init__(self, n_inputs, n_neurons):
         # start with small weights and no bias
@@ -63,13 +54,6 @@ class Layer_Dense:
 
 # Uses ReLU activation function to allow for nonlinearities
 class Activation_ReLU:
-    """
-    ReLU activation:
-      output = max(0, inputs)
-
-    Backprop:
-      passes gradient through where input > 0, else 0
-    """
     # forward pass
     def forward(self, inputs):
         # if negative send 0, if positive use the input
@@ -89,7 +73,7 @@ class Activation_Softmax:
         self.output = exp_values / np.sum(exp_values, axis=1, keepdims=True)
 
 
-# Loss base class
+# loss base class
 class Loss:
     # calls subclass to get per-sample losses and averages them
     def calculate(self, y_pred, y_true):
@@ -117,17 +101,6 @@ class Loss_CategoricalCrossentropy(Loss):
 
 # provides simplified backward
 class Softmax_CategoricalCrossentropy(Loss):
-    """
-    Combined Softmax + Categorical Cross-Entropy.
-
-    Key trick:
-      If softmax outputs are p and labels are y (one-hot),
-      gradient wrt logits z is:
-        dL/dz = (p - y) / batch_size
-
-    This is simpler + more numerically stable than doing
-    softmax backward + cross-entropy backward separately.
-    """
     # creates a softmax object with a categorical cross entropy inside
     def __init__(self):
         self.activation = Activation_Softmax()
@@ -159,19 +132,6 @@ class Softmax_CategoricalCrossentropy(Loss):
 
 # stochastic gradient descent optimizer
 class Optimizer_SGD:
-    """
-    SGD optimizer with optional momentum and learning rate decay.
-
-    Without momentum:
-      w <- w - lr * dw
-
-    With momentum:
-      v <- momentum * v - lr * dw
-      w <- w + v
-    
-    With decay:
-      lr_current = lr_initial / (1 + decay * iterations)
-    """
     # stores hyperparameters and a counter
     def __init__(self, learning_rate=0.1, momentum=0.0, decay=0.0):
         self.learning_rate = learning_rate
